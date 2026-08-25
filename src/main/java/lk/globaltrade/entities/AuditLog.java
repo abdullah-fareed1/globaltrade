@@ -1,4 +1,4 @@
-package com.globaltrade.entity;
+package lk.globaltrade.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -11,9 +11,6 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // Nullable: timer-triggered log entries (e.g. the auto ETA update) have
-    // no human user behind them. Requires the SQL patch: ALTER TABLE
-    // audit_logs MODIFY user_id INT NULL;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -31,7 +28,6 @@ public class AuditLog {
     @Column(name = "details")
     private String details;
 
-    // Requires the SQL patch adding this column — see message above.
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

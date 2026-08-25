@@ -1,4 +1,4 @@
-package com.globaltrade.entity;
+package lk.globaltrade.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
