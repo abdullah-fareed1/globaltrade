@@ -20,9 +20,7 @@ public class User {
     @Column(length = 200, unique = true)
     private String email;
 
-    // NOTE: DB column is VARCHAR(45), too short for a bcrypt hash (~60 chars).
-    // Widen with: ALTER TABLE users MODIFY password VARCHAR(100);
-    @Column(length = 100)
+    @Column(length = 256)
     private String password;
 
     @Enumerated(EnumType.STRING)

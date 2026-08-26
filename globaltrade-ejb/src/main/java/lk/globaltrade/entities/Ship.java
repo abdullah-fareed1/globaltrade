@@ -19,13 +19,11 @@ public class Ship {
 
     private Integer capacity;
 
-    // This is the field the EJB Timer Service updates on schedule —
-    // nothing else in the app should write to it directly.
     @Enumerated(EnumType.STRING)
     @Column(length = 45)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "current_port_id")
     private Port currentPort;
 

@@ -5,23 +5,15 @@
              https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
 
-    <persistence-unit name="GlobalTradePU" transaction-type="JTA">
-        <jta-data-source>jdbc/GlobalTradeDataSource</jta-data-source>
+    <persistence-unit name="globaltradePU" transaction-type="JTA">
+        <jta-data-source>jdbc/GlobalTradeDS</jta-data-source>
 
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
-
-            <property name="eclipselink.logging.parameters" value="true"/>
-            <property name="eclipselink.cache.size.Product" value="5000"/>
-
             <property name="eclipselink.logging.level" value="WARNING"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.target-database" value="MySQL"/>
-
-            <property name="eclipselink.connection-pool.default.initial" value="200"/>
-            <property name="eclipselink.connection-pool.default.max" value="1000"/>
             <property name="eclipselink.cache.shared.default" value="true"/>
-
-
         </properties>
     </persistence-unit>
 

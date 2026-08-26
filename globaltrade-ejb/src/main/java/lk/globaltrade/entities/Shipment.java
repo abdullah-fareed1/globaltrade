@@ -18,21 +18,18 @@ public class Shipment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "origin_port_id", nullable = false)
     private Port originPort;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "destination_port_id", nullable = false)
     private Port destinationPort;
 
-    // Nullable: a ship is assigned to the shipment after booking, not at
-    // creation time. Requires the SQL patch: ALTER TABLE shipments MODIFY
-    // ships_id INT NULL;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ships_id")
     private Ship ship;
@@ -49,8 +46,6 @@ public class Shipment {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // Plain join table, no extra columns beyond the two FKs — matches
-    // shipment_containers exactly, no separate entity class needed.
     @ManyToMany
     @JoinTable(
         name = "shipment_containers",
