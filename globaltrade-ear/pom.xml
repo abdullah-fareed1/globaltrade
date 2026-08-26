@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>lk.globaltrade</groupId>
         <artifactId>globaltrade-scm</artifactId>
@@ -10,11 +11,65 @@
     </parent>
 
     <artifactId>globaltrade-ear</artifactId>
+    <packaging>ear</packaging>
+    <name>GlobalTrade :: EAR</name>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <!--
+        Bundles globaltrade-ejb + globaltrade-web ONLY.
+        globaltrade-realm is deliberately NOT a dependency here — Payara
+        loads security realms on the server classpath before any
+        application classloader exists, so realm classes cannot ship
+        inside the EAR (CONTRACTS.md section 0 / build plan Phase 0
+        FIX 1). It is installed separately via `asadmin add-library`.
+    -->
+
+    <dependencies>
+        <dependency>
+            <groupId>lk.globaltrade</groupId>
+            <artifactId>globaltrade-ejb</artifactId>
+            <version>${project.version}</version>
+            <type>ejb</type>
+        </dependency>
+        <dependency>
+            <groupId>lk.globaltrade</groupId>
+            <artifactId>globaltrade-web</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <version>10</version>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <generateApplicationXml>false</generateApplicationXml>
+                    <!--
+                        application.xml is hand-written in
+                        src/main/application/META-INF/ (Phase 7) so the
+                        <context-root>/globaltrade</context-root> and
+                        module ordering are explicit rather than
+                        plugin-inferred.
+                    -->
+                    <modules>
+                        <ejbModule>
+                            <groupId>lk.globaltrade</groupId>
+                            <artifactId>globaltrade-ejb</artifactId>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>lk.globaltrade</groupId>
+                            <artifactId>globaltrade-web</artifactId>
+                            <contextRoot>/globaltrade</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

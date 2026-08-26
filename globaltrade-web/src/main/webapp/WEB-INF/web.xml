@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>GlobalTrade</display-name>
+
+    <!--
+        Phase 0 stub — intentionally empty otherwise.
+        Phase 6 (build plan Step 6A) adds:
+          - security-constraint entries for /customer/*, /coordinator/*,
+            /admin/*, /home
+          - login-config (FORM, /login.jsp, /error.jsp,
+            realm-name=GlobalTradeRealm)
+          - security-role entries for CUSTOMER, COORDINATOR, ADMIN
+        Do not add servlet <url-pattern> mappings here yet — none of the
+        Phase 6 servlets exist as source files at this point in the build.
+    -->
+
+</web-app>

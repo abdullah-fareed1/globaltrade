@@ -5,32 +5,68 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>lk.globaltrade</groupId>
-    <artifactId>GlobalTrade</artifactId>
+    <artifactId>globaltrade-scm</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>GlobalTrade</name>
+    <packaging>pom</packaging>
+    <name>GlobalTrade SCM (Aggregator)</name>
+
+    <!--
+        4-module reactor per GLOBALTRADE_BUILD_PLAN.md Phase 0.
+        globaltrade-realm is listed as a module so `mvn compile` from
+        root builds it too, but it is intentionally NOT a dependency
+        of globaltrade-ear — it is installed into the Payara domain
+        separately via `asadmin add-library` (Phase 5).
+    -->
+    <modules>
+        <module>globaltrade-ejb</module>
+        <module>globaltrade-web</module>
+        <module>globaltrade-ear</module>
+        <module>globaltrade-realm</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jakartaee-api.version>10.0.0</jakartaee-api.version>
+        <junit.version>5.10.2</junit.version>
+        <mockito.version>5.11.0</mockito.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>10.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.4.0</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <finalName>${project.name}</finalName>
-    </build>
+    <!-- Pins versions for all submodules; each submodule still declares
+         its own <dependencies> with matching groupId/artifactId. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>${jakartaee-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>8.4.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

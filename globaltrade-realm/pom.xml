@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>lk.globaltrade</groupId>
         <artifactId>globaltrade-scm</artifactId>
@@ -10,11 +11,52 @@
     </parent>
 
     <artifactId>globaltrade-realm</artifactId>
+    <packaging>jar</packaging>
+    <name>GlobalTrade :: Realm</name>
+
+    <!--
+        Standalone jar, deliberately NOT depended on by globaltrade-ear.
+        Ships to the Payara domain via the asadmin add-library command
+        (type=common), once for this jar and once for jbcrypt-0.4.jar.
+        See docs/payara-setup.asadmin (build plan Phase 5) for the exact
+        commands.
+
+        GlobalTradeRealm/GlobalTradeLoginModule extend Payara's
+        AppservRealm / AppservPasswordLoginModule, which live in
+        security.jar and security-ee.jar inside the payara glassfish
+        modules directory. Those are NOT on Maven Central, so before
+        compiling this module you must install them locally with
+        "mvn install:install-file", pointing at each jar and giving it
+        the groupId/artifactId/version used in the dependencies below
+        (fish.payara:security and fish.payara:security-ee).
+
+        Adjust payara.security.version if the coordinate you installed
+        under does not match.
+    -->
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <payara.security.version>6.0.0</payara.security.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>fish.payara</groupId>-->
+<!--            <artifactId>security</artifactId>-->
+<!--            <version>${payara.security.version}</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>fish.payara</groupId>-->
+<!--            <artifactId>security-ee</artifactId>-->
+<!--            <version>${payara.security.version}</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+    </dependencies>
 
 </project>
