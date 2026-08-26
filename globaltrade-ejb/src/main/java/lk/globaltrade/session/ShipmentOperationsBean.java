@@ -2,6 +2,7 @@
 package lk.globaltrade.session;
 
 import jakarta.annotation.Resource;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ejb.SessionContext;
 import jakarta.ejb.Stateless;
@@ -54,6 +55,7 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
     private UserAccountBeanLocal userAccountBean;
 
     @Override
+    @RolesAllowed("COORDINATOR")
     public List<Shipment> viewActiveShipments() {
         return em.createQuery(
                         "SELECT s FROM Shipment s WHERE s.status <> :delivered", Shipment.class)
@@ -62,6 +64,7 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
     }
 
     @Override
+    @RolesAllowed("COORDINATOR")
     public void updateStatus(int shipmentId, Shipment.Status newStatus) throws InvalidShipmentStateException {
         Shipment shipment = em.find(Shipment.class, shipmentId);
         if (shipment == null) {
@@ -107,6 +110,7 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
     }
 
     @Override
+    @RolesAllowed("CUSTOMER")
     public List<Shipment> getOwnShipments() {
         User caller = currentUser();
         if (caller == null) {
@@ -119,6 +123,7 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
     }
 
     @Override
+    @RolesAllowed("CUSTOMER")
     public Shipment getShipmentById(int shipmentId) throws UnauthorizedShipmentAccessException {
         Shipment shipment = em.find(Shipment.class, shipmentId);
         if (shipment == null) {

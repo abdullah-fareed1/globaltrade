@@ -1,7 +1,9 @@
 // Path: globaltrade-ejb/src/main/java/lk/globaltrade/session/ShipmentBookingBean.java
 package lk.globaltrade.session;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
@@ -11,6 +13,9 @@ import lk.globaltrade.entities.Shipment;
 import lk.globaltrade.entities.User;
 import lk.globaltrade.exception.NoContainerAvailableException;
 import lk.globaltrade.exception.SupplyChainSystemException;
+import lk.globaltrade.interceptor.AuditInterceptor;
+import lk.globaltrade.interceptor.PerformanceInterceptor;
+import lk.globaltrade.interceptor.SecurityInterceptor;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +43,7 @@ import java.util.List;
  *   7. wrap PersistenceException -> SupplyChainSystemException
  */
 @Stateless
+@Interceptors({SecurityInterceptor.class, PerformanceInterceptor.class, AuditInterceptor.class})
 public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
 
     private static final double COST_PER_CONTAINER = 1000.0;
@@ -46,6 +52,7 @@ public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed("CUSTOMER")
     public Shipment bookShipment(int customerId, int originPortId, int destinationPortId, int containerCount)
             throws NoContainerAvailableException {
 
