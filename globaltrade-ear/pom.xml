@@ -14,14 +14,6 @@
     <packaging>ear</packaging>
     <name>GlobalTrade :: EAR</name>
 
-    <!--
-        Bundles globaltrade-ejb + globaltrade-web ONLY.
-        globaltrade-realm is deliberately NOT a dependency here — Payara
-        loads security realms on the server classpath before any
-        application classloader exists, so realm classes cannot ship
-        inside the EAR (CONTRACTS.md section 0 / build plan Phase 0
-        FIX 1). It is installed separately via `asadmin add-library`.
-    -->
 
     <dependencies>
         <dependency>
@@ -49,21 +41,17 @@
                     <version>10</version>
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
                     <generateApplicationXml>false</generateApplicationXml>
-                    <!--
-                        application.xml is hand-written in
-                        src/main/application/META-INF/ (Phase 7) so the
-                        <context-root>/globaltrade</context-root> and
-                        module ordering are explicit rather than
-                        plugin-inferred.
-                    -->
+
                     <modules>
                         <ejbModule>
                             <groupId>lk.globaltrade</groupId>
                             <artifactId>globaltrade-ejb</artifactId>
+                            <bundleFileName>globaltrade-ejb.jar</bundleFileName>
                         </ejbModule>
                         <webModule>
                             <groupId>lk.globaltrade</groupId>
                             <artifactId>globaltrade-web</artifactId>
+                            <bundleFileName>globaltrade-web.war</bundleFileName>
                             <contextRoot>/globaltrade</contextRoot>
                         </webModule>
                     </modules>
