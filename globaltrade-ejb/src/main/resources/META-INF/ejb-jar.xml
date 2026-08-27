@@ -18,8 +18,6 @@
 
     <display-name>GlobalTrade</display-name>
 
-    <enterprise-beans/>
-
     <interceptors>
         <interceptor>
             <interceptor-class>lk.globaltrade.interceptor.SecurityInterceptor</interceptor-class>

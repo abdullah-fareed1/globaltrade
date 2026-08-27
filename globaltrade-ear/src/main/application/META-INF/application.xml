@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Hand-written per globaltrade-ear/pom.xml's maven-ear-plugin config
+    (generateApplicationXml=false) so the context-root and module order
+    are explicit rather than plugin-inferred.
+
+    Module URIs (globaltrade-ejb.jar / globaltrade-web.war) match each
+    module's <finalName>${project.artifactId}</finalName> in its own
+    pom.xml - if either module's finalName ever changes, this file
+    must change with it.
+
+    globaltrade-realm is intentionally absent: it was removed entirely
+    (DEVIATION_LOG_SECURITY.md) in favour of standard Jakarta Security
+    (@DatabaseIdentityStoreDefinition / @FormAuthenticationMechanismDefinition
+    in globaltrade-web), so there is no third module to bundle.
+-->
+<application xmlns="https://jakarta.ee/xml/ns/jakartaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                 https://jakarta.ee/xml/ns/jakartaee/application_10.xsd"
+             version="10">
+
+    <application-name>GlobalTrade</application-name>
+    <display-name>GlobalTrade</display-name>
+
+    <module>
+        <ejb>globaltrade-ejb.jar</ejb>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>globaltrade-web.war</web-uri>
+            <context-root>/globaltrade</context-root>
+        </web>
+    </module>
+
+</application>
