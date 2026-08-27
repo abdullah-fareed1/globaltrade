@@ -1,0 +1,66 @@
+# =====================================================
+# GlobalTrade Logistics — Payara domain setup
+#
+# BUILD_PLAN.md Phase 0.5 — datasource pool + resource + verification.
+#
+# REVISED: the realm-installation section that used to follow this
+# (create-auth-realm, add-library for globaltrade-realm.jar, appending
+# login.conf) has been REMOVED. Authentication is now handled by
+# standard Jakarta EE Security (@DatabaseIdentityStoreDefinition +
+# @FormAuthenticationMechanismDefinition in
+# globaltrade-web/.../security/SecurityConfig.java) -- no server-level
+# realm configuration, no login.conf editing, no add-library step, no
+# domain restart for security purposes. It's part of the application
+# itself and deploys with the EAR like everything else. See
+# SecurityConfig.java's Javadoc for the full rationale.
+#
+# Run each block with:  asadmin <command...>
+# or paste the whole file into `asadmin --user admin multimode`.
+#
+# Assumes:
+#   - Payara domain1 already started (asadmin start-domain domain1)
+#   - MySQL running locally, `globaltrade` schema + user already
+#     created by schema_globaltrade.sql (which also does
+#     CREATE USER 'globaltrade'@'localhost' IDENTIFIED BY 'globaltrade')
+#   - mysql-connector-j on the domain's classpath, e.g.
+#       asadmin add-library --type common /path/to/mysql-connector-j-8.4.0.jar
+#     (do this once, before command 1 below)
+# =====================================================
+
+# -----------------------------------------------------
+# 1. JDBC connection pool.
+#    --isolationlevel read-committed : CONTRACTS.md Sec9 -- isolation is
+#    set on the pool, NOT in persistence.xml, because EclipseLink
+#    ignores Hibernate's isolation property and MySQL otherwise
+#    defaults to REPEATABLE_READ.
+# -----------------------------------------------------
+asadmin create-jdbc-connection-pool \
+  --datasourceclassname com.mysql.cj.jdbc.MysqlDataSource \
+  --restype javax.sql.DataSource \
+  --isolationlevel read-committed \
+  --isisolationguaranteed=true \
+  --property "user=globaltrade:password=globaltrade:serverName=localhost:portNumber=3306:databaseName=globaltrade:useSSL=false:allowPublicKeyRetrieval=true" \
+  GlobalTradePool
+
+# -----------------------------------------------------
+# 2. JDBC resource -- JNDI name is frozen by CONTRACTS.md Sec0, and is
+#    the exact name SecurityConfig's dataSourceLookup uses too.
+# -----------------------------------------------------
+asadmin create-jdbc-resource \
+  --connectionpoolid GlobalTradePool \
+  jdbc/GlobalTradeDS
+
+# -----------------------------------------------------
+# 3. Verify the pool before writing a line of bean code.
+# -----------------------------------------------------
+asadmin ping-connection-pool GlobalTradePool
+
+# -----------------------------------------------------
+# 4. Sanity check the resource landed with the exact JNDI name
+#    persistence.xml (and now SecurityConfig) expect.
+# -----------------------------------------------------
+asadmin list-jdbc-resources
+
+# That's it for server-level setup. No realm, no login.conf, no
+# add-library, no restart-domain. Deploy the EAR (Phase 7) and log in --
+# authentication is entirely inside the application.

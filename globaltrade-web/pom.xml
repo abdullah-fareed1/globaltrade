@@ -12,15 +12,6 @@
 
     <artifactId>globaltrade-web</artifactId>
     <packaging>war</packaging>
-    <name>GlobalTrade :: Web</name>
-
-    <!--
-        Holds: servlets + JSPs (lk.globaltrade.web per CONTRACTS.md
-        section 2). Depends on globaltrade-ejb for the Local interfaces
-        it injects via @EJB — scope=provided because both modules land
-        together inside the EAR, so the EJB classes must NOT be
-        duplicated into WEB-INF/lib.
-    -->
 
     <dependencies>
         <dependency>
@@ -37,12 +28,18 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Payara 6 bundles JSTL 3.0 at runtime; compile-time only here -->
-        <dependency>
+      <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- BcryptPasswordHash needs this directly now. -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
         </dependency>
     </dependencies>
 

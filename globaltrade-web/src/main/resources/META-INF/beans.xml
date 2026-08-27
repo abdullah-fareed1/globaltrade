@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    globaltrade-web previously had no beans.xml at all. It needs one now:
+    SecurityConfig (lk.globaltrade.web.security) is a CDI bean, and the
+    jakarta.security.enterprise annotations on it (@DatabaseIdentityStoreDefinition,
+    @FormAuthenticationMechanismDefinition) are only processed by the
+    container if CDI actually discovers the class as a bean. Without this
+    file, Weld may run in "annotated" discovery mode and skip it, or skip
+    CDI entirely for this module, and the security config silently does
+    nothing at deploy time (no error, just plain-container-auth
+    behaviour).
+
+    Placed in src/main/resources/META-INF/ so it lands at
+    WEB-INF/classes/META-INF/beans.xml in the packaged WAR, per the
+    Jakarta EE spec for beans.xml in a war's classes directory.
+-->
+<beans xmlns="https://jakarta.ee/xml/ns/jakartaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd"
+       bean-discovery-mode="all">
+
+</beans>

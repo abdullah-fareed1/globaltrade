@@ -10,18 +10,10 @@
     <packaging>pom</packaging>
     <name>GlobalTrade SCM (Aggregator)</name>
 
-    <!--
-        4-module reactor per GLOBALTRADE_BUILD_PLAN.md Phase 0.
-        globaltrade-realm is listed as a module so `mvn compile` from
-        root builds it too, but it is intentionally NOT a dependency
-        of globaltrade-ear — it is installed into the Payara domain
-        separately via `asadmin add-library` (Phase 5).
-    -->
     <modules>
         <module>globaltrade-ejb</module>
         <module>globaltrade-web</module>
         <module>globaltrade-ear</module>
-        <module>globaltrade-realm</module>
     </modules>
 
     <properties>
@@ -32,8 +24,6 @@
         <mockito.version>5.11.0</mockito.version>
     </properties>
 
-    <!-- Pins versions for all submodules; each submodule still declares
-         its own <dependencies> with matching groupId/artifactId. -->
     <dependencyManagement>
         <dependencies>
             <dependency>
