@@ -1,0 +1,57 @@
+<%@ page contentType="text/html;charset=UTF-8" isErrorPage="true" %>
+<!--
+    Public page, must stay OUTSIDE WEB-INF (CONTRACTS.md Sec11) for the
+    same reason as login.jsp: the container serves it directly, this
+    time when @FormAuthenticationMechanismDefinition's loginToContinue
+    errorPage is invoked after a failed login attempt (wrong
+    email/password). Also registered as the app-wide <error-page> for
+    uncaught exceptions in web.xml, so isErrorPage="true" is set to
+    allow both uses.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error — GlobalTrade Logistics</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .box {
+            background: #fff;
+            padding: 2rem 2.25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 340px;
+            text-align: center;
+        }
+        h1 { font-size: 1.15rem; color: #92251f; margin: 0 0 0.5rem; }
+        p { color: #4b5563; font-size: 0.9rem; }
+        a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #fff;
+            background: #0b3d63;
+            padding: 0.5rem 1.1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        a:hover { background: #0f4d7a; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>Something went wrong</h1>
+    <p>That didn't work — the email or password may be incorrect, or an
+       unexpected error occurred. Please try again.</p>
+    <a href="<%= request.getContextPath() %>/login.jsp">Back to login</a>
+</div>
+</body>
+</html>
