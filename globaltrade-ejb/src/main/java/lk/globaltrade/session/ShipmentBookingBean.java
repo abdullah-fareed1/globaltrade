@@ -2,8 +2,8 @@
 package lk.globaltrade.session;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
-import jakarta.interceptor.Interceptors;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
@@ -13,9 +13,7 @@ import lk.globaltrade.entities.Shipment;
 import lk.globaltrade.entities.User;
 import lk.globaltrade.exception.NoContainerAvailableException;
 import lk.globaltrade.exception.SupplyChainSystemException;
-import lk.globaltrade.interceptor.AuditInterceptor;
-import lk.globaltrade.interceptor.PerformanceInterceptor;
-import lk.globaltrade.interceptor.SecurityInterceptor;
+import lk.globaltrade.timer.ShipmentAlertTimerBean;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +21,16 @@ import java.util.List;
 /**
  * CMT REQUIRED (container default — no @TransactionAttribute needed).
  *
- * No @Interceptors here per CONTRACTS.md §8 — Phase 3 binds the
- * Security -> Performance -> Audit chain to this class exclusively
- * through ejb-jar.xml's <interceptor-order>, not through annotations.
+ * No @Interceptors here per CONTRACTS.md §8 — the Security -> Performance
+ * -> Audit chain is bound to this class exclusively through
+ * ejb-jar.xml's <interceptor-order>, not through annotations.
+ *
+ * FIX (Phase 3 follow-up): this class previously carried a stray
+ * @Interceptors({SecurityInterceptor.class, PerformanceInterceptor.class,
+ * AuditInterceptor.class}) annotation that contradicted this very
+ * Javadoc and the build plan's explicit warning against mixing XML and
+ * annotation binding sources. Removed — ejb-jar.xml is now the sole
+ * source of truth for this bean's interceptor chain.
  *
  * Business rule is CONTRACTS.md §12 "Booking", verbatim:
  *   1. query AVAILABLE containers, capped at containerCount
@@ -36,20 +41,24 @@ import java.util.List;
  *   4. new Shipment: PENDING, estimatedCost = 1000.0 * containerCount,
  *      eta stays null, createdAt via Shipment's own @PrePersist
  *   5. attach containers, persist
- *   6. TODO Phase 4: shipmentAlertTimer.scheduleReadinessCheck(id, 30)
- *      — ShipmentAlertTimerBean does not exist until Phase 4. Wiring
- *      the injection now would not compile; the build plan calls this
- *      TODO out explicitly rather than stubbing a placeholder bean.
+ *   6. shipmentAlertTimer.scheduleReadinessCheck(id, 30) (Phase 4 —
+ *      previously a TODO; ShipmentAlertTimerBean now exists)
  *   7. wrap PersistenceException -> SupplyChainSystemException
  */
 @Stateless
-@Interceptors({SecurityInterceptor.class, PerformanceInterceptor.class, AuditInterceptor.class})
 public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
 
     private static final double COST_PER_CONTAINER = 1000.0;
+    private static final long READINESS_CHECK_DELAY_MINUTES = 30;
 
     @PersistenceContext(unitName = "globaltradePU")
     private EntityManager em;
+
+    // ShipmentAlertTimerBean is a @Singleton with no explicit Local
+    // interface (Phase 4 file inventory lists only the two bean
+    // classes) — injected here via its no-interface view.
+    @EJB
+    private ShipmentAlertTimerBean shipmentAlertTimer;
 
     @Override
     @RolesAllowed("CUSTOMER")
@@ -91,7 +100,7 @@ public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
             em.persist(shipment);
             // createdAt populated by Shipment.onCreate() @PrePersist.
 
-            // TODO Phase 4: shipmentAlertTimer.scheduleReadinessCheck(shipment.getId(), 30);
+            shipmentAlertTimer.scheduleReadinessCheck(shipment.getId(), READINESS_CHECK_DELAY_MINUTES);
 
             return shipment;
         } catch (PersistenceException e) {
