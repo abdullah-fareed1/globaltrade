@@ -14,6 +14,7 @@ import lk.globaltrade.entities.User;
 import lk.globaltrade.exception.NoContainerAvailableException;
 import lk.globaltrade.exception.SupplyChainSystemException;
 import lk.globaltrade.timer.ShipmentAlertTimerBean;
+import lk.globaltrade.timer.ShipmentAlertTimerBeanLocal;
 
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
     // interface (Phase 4 file inventory lists only the two bean
     // classes) — injected here via its no-interface view.
     @EJB
-    private ShipmentAlertTimerBean shipmentAlertTimer;
+    private ShipmentAlertTimerBeanLocal shipmentAlertTimer;
 
     @Override
     @RolesAllowed("CUSTOMER")

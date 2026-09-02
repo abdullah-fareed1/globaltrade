@@ -1,10 +1,13 @@
 package lk.globaltrade.timer;
 
+import jakarta.ejb.Local;
+
 /**
  * Programmatic timer seam. ShipmentBookingBean calls this at the end of
  * bookShipment() to schedule a 30-minute readiness check (see Phase 2 TODO
  * and CONTRACTS.md §12, step 6).
  */
+@Local
 public interface ShipmentAlertTimerBeanLocal {
 
     /**
