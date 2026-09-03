@@ -1,4 +1,3 @@
-// Path: globaltrade-ejb/src/main/java/lk/globaltrade/session/ShipmentBookingBean.java
 package lk.globaltrade.session;
 
 import jakarta.annotation.security.RolesAllowed;
@@ -13,39 +12,11 @@ import lk.globaltrade.entities.Shipment;
 import lk.globaltrade.entities.User;
 import lk.globaltrade.exception.NoContainerAvailableException;
 import lk.globaltrade.exception.SupplyChainSystemException;
-import lk.globaltrade.timer.ShipmentAlertTimerBean;
 import lk.globaltrade.timer.ShipmentAlertTimerBeanLocal;
 
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * CMT REQUIRED (container default — no @TransactionAttribute needed).
- *
- * No @Interceptors here per CONTRACTS.md §8 — the Security -> Performance
- * -> Audit chain is bound to this class exclusively through
- * ejb-jar.xml's <interceptor-order>, not through annotations.
- *
- * FIX (Phase 3 follow-up): this class previously carried a stray
- * @Interceptors({SecurityInterceptor.class, PerformanceInterceptor.class,
- * AuditInterceptor.class}) annotation that contradicted this very
- * Javadoc and the build plan's explicit warning against mixing XML and
- * annotation binding sources. Removed — ejb-jar.xml is now the sole
- * source of truth for this bean's interceptor chain.
- *
- * Business rule is CONTRACTS.md §12 "Booking", verbatim:
- *   1. query AVAILABLE containers, capped at containerCount
- *   2. fewer found than requested -> NoContainerAvailableException
- *      (rollback=true via @ApplicationException on the exception class
- *      itself — nothing here reserves or persists after that point)
- *   3. mark each found container RESERVED
- *   4. new Shipment: PENDING, estimatedCost = 1000.0 * containerCount,
- *      eta stays null, createdAt via Shipment's own @PrePersist
- *   5. attach containers, persist
- *   6. shipmentAlertTimer.scheduleReadinessCheck(id, 30) (Phase 4 —
- *      previously a TODO; ShipmentAlertTimerBean now exists)
- *   7. wrap PersistenceException -> SupplyChainSystemException
- */
 @Stateless
 public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
 
@@ -55,9 +26,6 @@ public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
     @PersistenceContext(unitName = "globaltradePU")
     private EntityManager em;
 
-    // ShipmentAlertTimerBean is a @Singleton with no explicit Local
-    // interface (Phase 4 file inventory lists only the two bean
-    // classes) — injected here via its no-interface view.
     @EJB
     private ShipmentAlertTimerBeanLocal shipmentAlertTimer;
 
@@ -73,21 +41,29 @@ public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
                 .getResultList();
 
         if (reservedContainers.size() < containerCount) {
-            // Thrown BEFORE any container is marked RESERVED and before
-            // anything is persisted — step 2 happens ahead of step 3.
             throw new NoContainerAvailableException(
                     "Requested " + containerCount + " containers, only "
                             + reservedContainers.size() + " available");
         }
 
         try {
-            for (Container container : reservedContainers) {
-                container.setStatus(Container.Status.RESERVED);
-            }
-
             User customer = em.find(User.class, customerId);
             Port originPort = em.find(Port.class, originPortId);
             Port destinationPort = em.find(Port.class, destinationPortId);
+
+          if (customer == null) {
+                throw new SupplyChainSystemException("Unknown customer id: " + customerId);
+            }
+            if (originPort == null) {
+                throw new SupplyChainSystemException("Unknown origin port id: " + originPortId);
+            }
+            if (destinationPort == null) {
+                throw new SupplyChainSystemException("Unknown destination port id: " + destinationPortId);
+            }
+
+            for (Container container : reservedContainers) {
+                container.setStatus(Container.Status.RESERVED);
+            }
 
             Shipment shipment = new Shipment();
             shipment.setCustomer(customer);
@@ -95,19 +71,15 @@ public class ShipmentBookingBean implements ShipmentBookingBeanLocal {
             shipment.setDestinationPort(destinationPort);
             shipment.setStatus(Shipment.Status.PENDING);
             shipment.setEstimatedCost(COST_PER_CONTAINER * containerCount);
-            // eta intentionally left null until a coordinator confirms.
             shipment.setContainers(new HashSet<>(reservedContainers));
 
             em.persist(shipment);
-            // createdAt populated by Shipment.onCreate() @PrePersist.
+            em.flush();
 
             shipmentAlertTimer.scheduleReadinessCheck(shipment.getId(), READINESS_CHECK_DELAY_MINUTES);
 
             return shipment;
         } catch (PersistenceException e) {
-            // System exception (unchecked, no @ApplicationException) ->
-            // per CONTRACTS.md §10 the container wraps this in
-            // EJBException before it reaches any caller.
             throw new SupplyChainSystemException("Failed to book shipment", e);
         }
     }

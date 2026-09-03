@@ -7,23 +7,6 @@
 
     <display-name>GlobalTrade</display-name>
 
-    <!--
-        Phase 6 (build plan Step 6A), revised per DEVIATION_LOG_SECURITY.md.
-
-        NO login-config element here. That block is superseded by the
-        FormAuthenticationMechanismDefinition annotation on
-        lk.globaltrade.web.security.SecurityConfig (globaltrade-web
-        module) - see that class's Javadoc. Adding a login-config block
-        here as well would be redundant at best and a source of
-        confusing double configuration at worst; the annotation is the
-        sole source of truth for the FORM mechanism, login.jsp and
-        error.jsp locations.
-
-        security-constraint and security-role are UNAFFECTED by that
-        change and remain required here: Jakarta Security enforces
-        authorization against the roles declared and constrained in
-        web.xml, it does not replace this part.
-    -->
 
     <security-constraint>
         <display-name>Customer area</display-name>
@@ -67,12 +50,6 @@
         </user-data-constraint>
     </security-constraint>
 
-    <!--
-        /home is the post-login router (CONTRACTS.md Sec11 / build plan
-        FIX 11): reachable by any authenticated role, it inspects
-        request.isUserInRole(...) and redirects to the matching
-        dashboard. It must stay open to all three roles, not just one.
-    -->
     <security-constraint>
         <display-name>Authenticated landing page</display-name>
         <web-resource-collection>
