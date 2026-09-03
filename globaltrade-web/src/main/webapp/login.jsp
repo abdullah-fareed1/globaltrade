@@ -76,12 +76,18 @@
         <div class="success">Account created — you can log in now.</div>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/j_security_check" method="post">
-        <label for="j_username">Email</label>
-        <input type="email" id="j_username" name="j_username" required autofocus>
+    <%-- Set by AuthenticationServlet when authentication fails. --%>
+    <c:if test="${not empty error}">
+        <div class="error"><c:out value="${error}"/></div>
+    </c:if>
 
-        <label for="j_password">Password</label>
-        <input type="password" id="j_password" name="j_password" required>
+    <form action="${pageContext.request.contextPath}/authenticate" method="post">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autofocus
+               value="<c:out value='${param.email}'/>">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
 
         <button type="submit">Log in</button>
     </form>

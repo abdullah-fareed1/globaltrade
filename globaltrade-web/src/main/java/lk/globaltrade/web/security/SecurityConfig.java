@@ -2,7 +2,7 @@ package lk.globaltrade.web.security;
 
 import jakarta.annotation.security.DeclareRoles;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.authentication.mechanism.http.CustomFormAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 
@@ -13,10 +13,10 @@ import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition
         groupsQuery = "SELECT role FROM users WHERE email = ?",
         hashAlgorithm = BcryptPasswordHash.class
 )
-@FormAuthenticationMechanismDefinition(
+@CustomFormAuthenticationMechanismDefinition(
         loginToContinue = @LoginToContinue(
                 loginPage = "/login.jsp",
-                errorPage = "/error.jsp"
+                errorPage = ""
         )
 )
 @DeclareRoles({"CUSTOMER", "COORDINATOR", "ADMIN"})

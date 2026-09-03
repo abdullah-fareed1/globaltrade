@@ -4,6 +4,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lk.globaltrade.entities.Container;
+import lk.globaltrade.exception.DuplicateContainerException;
 
 import java.util.List;
 
@@ -21,7 +22,19 @@ public class ContainerBean implements ContainerBeanLocal {
     }
 
     @Override
-    public Container create(String containerNumber) {
+    public Container create(String containerNumber) throws DuplicateContainerException {
+
+        Long existing = em.createQuery(
+                        "SELECT COUNT(c) FROM Container c WHERE c.containerNumber = :number",
+                        Long.class)
+                .setParameter("number", containerNumber)
+                .getSingleResult();
+
+        if (existing > 0) {
+            throw new DuplicateContainerException(
+                    "Container number " + containerNumber + " already exists.");
+        }
+
         Container container = new Container(containerNumber, Container.Status.AVAILABLE);
         em.persist(container);
         return container;

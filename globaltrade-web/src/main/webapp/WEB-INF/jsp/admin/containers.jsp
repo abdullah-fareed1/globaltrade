@@ -5,7 +5,7 @@
 <h1>Containers</h1>
 
 <c:if test="${not empty error}">
-    <div class="error">${error}</div>
+    <div class="error"><c:out value="${error}"/></div>
 </c:if>
 
 <div class="card">
@@ -17,7 +17,7 @@
         <c:forEach var="ctn" items="${containers}">
             <tr>
                 <td>#${ctn.id}</td>
-                <td>${ctn.containerNumber}</td>
+                <td><c:out value="${ctn.containerNumber}"/></td>
                 <td><span class="badge">${ctn.status}</span></td>
                 <td>
                     <form class="inline" action="${pageContext.request.contextPath}/admin/containers" method="post">

@@ -1,19 +1,25 @@
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.globaltrade.entities.Container;
+import lk.globaltrade.exception.DuplicateContainerException;
 import lk.globaltrade.session.ContainerBeanLocal;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @WebServlet("/admin/containers")
 public class AdminContainerServlet extends HttpServlet {
+
+    private static final Logger LOG = Logger.getLogger(AdminContainerServlet.class.getName());
 
     private static final String VIEW = "/WEB-INF/jsp/admin/containers.jsp";
 
@@ -38,7 +44,21 @@ public class AdminContainerServlet extends HttpServlet {
                 showList(request, response, "Container number is required.");
                 return;
             }
-            containerBean.create(containerNumber.trim());
+
+            try {
+                containerBean.create(containerNumber.trim());
+
+            } catch (DuplicateContainerException e) {
+                showList(request, response, e.getMessage());
+                return;
+
+            } catch (EJBException e) {
+                LOG.log(Level.WARNING, "Container create failed", e);
+                showList(request, response,
+                        "Could not create that container. The number may already be in use.");
+                return;
+            }
+
         } else if ("updateStatus".equals(action)) {
             try {
                 int containerId = Integer.parseInt(request.getParameter("containerId"));
