@@ -15,16 +15,6 @@ import jakarta.persistence.PersistenceContext;
 import lk.globaltrade.entities.Shipment;
 import lk.globaltrade.session.AuditLogWriterBeanLocal;
 
-/**
- * Programmatic timer: ShipmentBookingBean calls scheduleReadinessCheck()
- * right after booking. 30 minutes later, handleTimeout() checks whether the
- * shipment moved off PENDING and writes the appropriate audit row.
- *
- * persistent = true so the timer survives a Payara restart. That also means
- * a stale timer from a previous deploy can fire against newer code — if
- * unexplained SHIPMENT_ALERT rows show up during testing, clear the domain's
- * timer store. Worth a sentence in the reliability write-up.
- */
 @Singleton
 public class ShipmentAlertTimerBean implements ShipmentAlertTimerBeanLocal {
 
@@ -37,12 +27,6 @@ public class ShipmentAlertTimerBean implements ShipmentAlertTimerBeanLocal {
     @EJB
     private AuditLogWriterBeanLocal auditLogWriter;
 
-    /**
-     * Default singleton locking is WRITE, which would serialise every
-     * booking in the application behind this one method. Creating a timer
-     * is thread-safe on its own, so READ costs nothing and buys back
-     * throughput.
-     */
     @Override
     @Lock(LockType.READ)
     public void scheduleReadinessCheck(int shipmentId, long delayMinutes) {

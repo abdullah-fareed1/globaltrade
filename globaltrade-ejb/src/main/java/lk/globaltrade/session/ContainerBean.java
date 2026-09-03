@@ -1,4 +1,3 @@
-// Path: globaltrade-ejb/src/main/java/lk/globaltrade/session/ContainerBean.java
 package lk.globaltrade.session;
 
 import jakarta.ejb.Stateless;
@@ -8,16 +7,7 @@ import lk.globaltrade.entities.Container;
 
 import java.util.List;
 
-/**
- * Admin CRUD bean for containers. CMT with the container default
- * (REQUIRED) — no @TransactionAttribute needed.
- *
- * Deliberately un-intercepted: per CONTRACTS.md §8, the Security ->
- * Performance -> Audit interceptor chain is bound (in ejb-jar.xml, in
- * Phase 3) only to ShipmentBookingBean and ShipmentOperationsBean. This
- * class must NOT carry an @Interceptors annotation and must not appear
- * in the ejb-jar.xml <interceptor-order> list.
- */
+
 @Stateless
 public class ContainerBean implements ContainerBeanLocal {
 
