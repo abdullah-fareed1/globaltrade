@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/AdminContainerServlet.java
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
@@ -12,9 +11,7 @@ import lk.globaltrade.session.ContainerBeanLocal;
 
 import java.io.IOException;
 
-/**
- * {@code /admin/containers} -- CONTRACTS.md Sec11.
- */
+
 @WebServlet("/admin/containers")
 public class AdminContainerServlet extends HttpServlet {
 

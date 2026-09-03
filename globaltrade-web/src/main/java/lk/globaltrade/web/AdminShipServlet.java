@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/AdminShipServlet.java
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
@@ -13,16 +12,6 @@ import lk.globaltrade.session.ShipBeanLocal;
 
 import java.io.IOException;
 
-/**
- * {@code /admin/ships} -- CONTRACTS.md Sec11.
- *
- * Note what this page does NOT offer: there is no control to edit a
- * ship's currentPort. Per ENTITIES.md, that field is written
- * exclusively by ShipmentTimerBean, and ShipBeanLocal.updateStatus()
- * deliberately does not touch it -- a write-ownership boundary this
- * servlet respects by construction, since it only ever calls the
- * methods ShipBeanLocal actually exposes.
- */
 @WebServlet("/admin/ships")
 public class AdminShipServlet extends HttpServlet {
 

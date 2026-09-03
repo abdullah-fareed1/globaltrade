@@ -39,14 +39,11 @@ class BookingTransactionTest {
         when(em.createQuery(anyString(), eq(Container.class))).thenReturn(query);
         when(query.setParameter(anyString(), any())).thenReturn(query);
         when(query.setMaxResults(anyInt())).thenReturn(query);
-        // asked for 3, only 1 is AVAILABLE
         Container c1 = new Container("MSCU1", Container.Status.AVAILABLE);
         when(query.getResultList()).thenReturn(List.of(c1));
 
         assertThrows(NoContainerAvailableException.class,
                 () -> bean.bookShipment(1, 1, 2, 3));
-
-        // nothing reserved, nothing persisted, no timer scheduled
         assertEquals(Container.Status.AVAILABLE, c1.getStatus());
         verify(em, never()).persist(any());
         verifyNoInteractions(alertTimer);
@@ -64,10 +61,7 @@ class BookingTransactionTest {
         when(em.find(eq(User.class), anyInt())).thenReturn(new User());
         when(em.find(eq(Port.class), anyInt())).thenReturn(new Port("LKCMB", "Colombo", "Sri Lanka"));
 
-        // NEW: simulate what a real EntityManager does on persist() —
-        // IDENTITY generation assigns the id. Without this, getId() stays
-        // null and the unboxing in scheduleReadinessCheck(int, ...) NPEs.
-        doAnswer(invocation -> {
+       doAnswer(invocation -> {
             Shipment s = invocation.getArgument(0);
             s.setId(99);
             return null;

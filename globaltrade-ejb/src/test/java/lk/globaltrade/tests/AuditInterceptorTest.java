@@ -64,13 +64,10 @@ class AuditInterceptorTest {
                 () -> interceptor.audit(ctx));
 
         assertSame(ex, thrown);
-        // This IS the REQUIRES_NEW proof: a row is written even though
-        // proceed() threw and the caller's transaction is rolling back.
         verify(auditLogWriter, times(1))
                 .writeLog(isNull(), eq("CREATE_SHIPMENT_FAILED"), eq("Shipment"), isNull(), eq("only 1 available"));
     }
 
-    // dummy target purely to hand the interceptor a real java.lang.reflect.Method
     interface SampleTarget {
         Shipment bookShipment(int a, int b, int c, int d);
     }

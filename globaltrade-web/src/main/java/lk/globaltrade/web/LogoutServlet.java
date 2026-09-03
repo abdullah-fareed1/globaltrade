@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/LogoutServlet.java
 package lk.globaltrade.web;
 
 import jakarta.servlet.ServletException;
@@ -9,15 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-/**
- * {@code /logout}. Not constrained by any security-constraint (nothing
- * needs authentication to reach it), but a logged-out visitor gains
- * nothing by calling it either.
- *
- * request.logout() clears the Jakarta Security caller identity;
- * session.invalidate() additionally drops any application session
- * state. Both, in that order, per CONTRACTS.md Sec11.
- */
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
 

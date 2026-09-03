@@ -57,8 +57,4 @@ class InvalidStatusTransitionTest {
         assertEquals(Shipment.Status.CONFIRMED, s.getStatus());
     }
 
-    // confirmed -> in_transit needs a ship query mocked; covered separately
-    // in BookingTransactionTest-style tests if you want the "no ship at
-    // origin" branch (port 5 / Jebel Ali) exercised too — worth adding
-    // for the "explicit handling, not NPE" claim in your report.
 }

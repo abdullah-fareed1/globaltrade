@@ -30,7 +30,7 @@ public class ShipmentAlertTimerBean implements ShipmentAlertTimerBeanLocal {
     @Override
     @Lock(LockType.READ)
     public void scheduleReadinessCheck(int shipmentId, long delayMinutes) {
-        TimerConfig config = new TimerConfig(shipmentId, true); // persistent=true
+        TimerConfig config = new TimerConfig(shipmentId, true);
         timerService.createSingleActionTimer(delayMinutes * 60_000L, config);
     }
 
@@ -40,9 +40,6 @@ public class ShipmentAlertTimerBean implements ShipmentAlertTimerBeanLocal {
 
         Shipment shipment = em.find(Shipment.class, shipmentId);
         if (shipment == null) {
-            // Shipment no longer exists (shouldn't happen in practice, but
-            // a stale persistent timer from an earlier deploy could point
-            // at a row that's gone). Nothing to alert on.
             return;
         }
 

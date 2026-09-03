@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/AdminPerformanceServlet.java
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
@@ -11,15 +10,6 @@ import lk.globaltrade.monitor.PerformanceMonitorBeanLocal;
 
 import java.io.IOException;
 
-/**
- * {@code /admin/performance} -- CONTRACTS.md Sec11.
- *
- * The rendered map's value type (PerformanceMonitorBean.MethodStats)
- * MUST stay public static per CONTRACTS.md Sec4 -- performance.jsp reads
- * it via JSP EL from the web module, across the EAR module boundary; a
- * non-public or non-static inner class means EL silently renders blank
- * cells with no deployment error.
- */
 @WebServlet("/admin/performance")
 public class AdminPerformanceServlet extends HttpServlet {
 

@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/AdminAuditLogServlet.java
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
@@ -11,13 +10,6 @@ import lk.globaltrade.session.AuditLogBeanLocal;
 
 import java.io.IOException;
 
-/**
- * {@code /admin/auditLog} -- CONTRACTS.md Sec11. Read-only: this is the
- * page where the REQUIRES_NEW / "audit survives a rolled-back
- * transaction" demonstration is actually observed -- a failed booking
- * (NoContainerAvailableException) still shows a *_FAILED row here even
- * though the Shipment/Container changes it attempted were rolled back.
- */
 @WebServlet("/admin/auditLog")
 public class AdminAuditLogServlet extends HttpServlet {
 

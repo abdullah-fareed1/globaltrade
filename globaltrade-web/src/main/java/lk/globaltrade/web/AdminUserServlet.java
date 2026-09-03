@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/AdminUserServlet.java
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
@@ -12,12 +11,6 @@ import lk.globaltrade.session.UserAccountBeanLocal;
 
 import java.io.IOException;
 
-/**
- * {@code /admin/users} -- CONTRACTS.md Sec11. Role management only;
- * registration of new accounts is the public {@code /register} flow
- * (RegisterServlet), not something an admin does on a user's behalf
- * here.
- */
 @WebServlet("/admin/users")
 public class AdminUserServlet extends HttpServlet {
 

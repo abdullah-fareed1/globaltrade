@@ -34,8 +34,6 @@
             <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- BcryptPasswordHash needs this directly now. -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>

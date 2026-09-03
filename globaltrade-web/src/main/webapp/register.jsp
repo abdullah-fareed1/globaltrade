@@ -1,12 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!--
-    Public page (CONTRACTS.md Sec11): /register has no security-constraint,
-    and this JSP is reached only via RegisterServlet's doGet forward, so
-    it does not strictly need to live outside WEB-INF the way login.jsp
-    and error.jsp do -- but keeping it at the webapp root, alongside
-    them, keeps all of the "public, unauthenticated" pages in one place.
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>

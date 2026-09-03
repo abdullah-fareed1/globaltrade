@@ -1,4 +1,3 @@
-// Path: globaltrade-ejb/src/main/java/lk/globaltrade/session/ContainerBeanLocal.java
 package lk.globaltrade.session;
 
 import jakarta.ejb.Local;

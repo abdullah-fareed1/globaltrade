@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Phase 3 — was missing entirely from the repo. This file is what
-    actually binds SecurityInterceptor / PerformanceInterceptor /
-    AuditInterceptor to ShipmentBookingBean and ShipmentOperationsBean.
-
-    Binding lives HERE ONLY. No @Interceptors annotation may appear on
-    either bean — see the fix to ShipmentBookingBean.java shipped
-    alongside this file, which removed a stray @Interceptors that would
-    otherwise have double-bound the chain (once via annotation, once
-    via this XML).
--->
 <ejb-jar xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
@@ -31,15 +20,6 @@
     </interceptors>
 
     <assembly-descriptor>
-
-        <!--
-            Class-level binding: applies to every business method on the
-            bean. Order is explicit and authoritative — Security first
-            (reject unauthorised calls before they cost anything),
-            Performance second (time only calls that passed security),
-            Audit last (logs the outcome, success or failure, of
-            everything that ran).
-        -->
         <interceptor-binding>
             <ejb-name>ShipmentBookingBean</ejb-name>
             <interceptor-order>
@@ -57,13 +37,6 @@
                 <interceptor-class>lk.globaltrade.interceptor.AuditInterceptor</interceptor-class>
             </interceptor-order>
         </interceptor-binding>
-
-        <!--
-            ContainerBean / ShipBean / UserAccountBean are deliberately
-            NOT bound here (build plan Phase 3 checklist) — they are
-            plain admin CRUD / BMT beans outside the audited chain.
-        -->
-
     </assembly-descriptor>
 
 </ejb-jar>

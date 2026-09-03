@@ -37,7 +37,7 @@ public class AuditInterceptor {
     @AroundInvoke
     public Object audit(InvocationContext ctx) throws Exception {
         String action = actionFor(ctx.getMethod().getName());
-        User caller = currentUser(); // may be null: system/timer-originated call
+        User caller = currentUser();
 
         try {
             Object result = ctx.proceed();

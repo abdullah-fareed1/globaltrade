@@ -1,4 +1,3 @@
-// Path: globaltrade-web/src/main/java/lk/globaltrade/web/CoordinatorServlet.java
 package lk.globaltrade.web;
 
 import jakarta.ejb.EJB;
@@ -13,9 +12,6 @@ import lk.globaltrade.session.ShipmentOperationsBeanLocal;
 
 import java.io.IOException;
 
-/**
- * {@code /coordinator/dashboard} -- CONTRACTS.md Sec11.
- */
 @WebServlet("/coordinator/dashboard")
 public class CoordinatorServlet extends HttpServlet {
 
@@ -47,11 +43,6 @@ public class CoordinatorServlet extends HttpServlet {
         try {
             shipmentOperationsBean.updateStatus(shipmentId, newStatus);
         } catch (InvalidShipmentStateException e) {
-            // Covers both illegal transitions (e.g. DELIVERED ->
-            // IN_TRANSIT) and "no ship available at origin port"
-            // (CONTRACTS.md Sec12 / build plan FIX 6, reachable via
-            // Jebel Ali in the seed data) -- both surface with the
-            // exception's own message.
             showDashboard(request, response, e.getMessage());
             return;
         }

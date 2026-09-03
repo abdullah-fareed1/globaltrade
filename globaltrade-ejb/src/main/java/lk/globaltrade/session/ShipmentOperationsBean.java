@@ -1,4 +1,3 @@
-// Path: globaltrade-ejb/src/main/java/lk/globaltrade/session/ShipmentOperationsBean.java
 package lk.globaltrade.session;
 
 import jakarta.annotation.Resource;
@@ -22,21 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * CMT REQUIRED (container default — no @TransactionAttribute needed).
- *
- * No @Interceptors here per CONTRACTS.md §8 — Phase 3 binds the
- * Security -> Performance -> Audit chain to this class exclusively
- * through ejb-jar.xml's <interceptor-order>, not through annotations.
- */
 @Stateless
 public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
 
-    /**
-     * Legal transitions, CONTRACTS.md §12. Anything not listed as a
-     * value here (including any transition out of DELIVERED, which is
-     * terminal) is illegal and throws InvalidShipmentStateException.
-     */
     private static final Map<Shipment.Status, Set<Shipment.Status>> LEGAL_TRANSITIONS = Map.of(
             Shipment.Status.PENDING, EnumSet.of(Shipment.Status.CONFIRMED, Shipment.Status.DELAYED),
             Shipment.Status.CONFIRMED, EnumSet.of(Shipment.Status.IN_TRANSIT, Shipment.Status.DELAYED),
@@ -95,9 +82,6 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
                     .orElse(null);
 
             if (assignedShip == null) {
-                // FIX 6: handled explicitly rather than left to NPE.
-                // Port 5 (Jebel Ali) has no seeded ship, so this branch
-                // is reachable in the demo data — do not remove it.
                 throw new InvalidShipmentStateException(
                         "No ship available at port " + shipment.getOriginPort().getCode()
                                 + " to move shipment " + shipmentId + " to IN_TRANSIT");
@@ -132,7 +116,6 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
 
         User caller = currentUser();
         if (caller == null || !shipment.getCustomer().getId().equals(caller.getId())) {
-            // This is the IDOR / resource-level authorization guard.
             throw new UnauthorizedShipmentAccessException(
                     "User is not authorized to access shipment " + shipmentId);
         }
@@ -140,11 +123,6 @@ public class ShipmentOperationsBean implements ShipmentOperationsBeanLocal {
         return shipment;
     }
 
-    /**
-     * The single rule for "who is calling", per CONTRACTS.md §5. The
-     * JAAS principal name is the caller's email, never their id — never
-     * compare it to an int.
-     */
     private User currentUser() {
         Principal principal = sessionContext.getCallerPrincipal();
         if (principal == null || "ANONYMOUS".equalsIgnoreCase(principal.getName())) {

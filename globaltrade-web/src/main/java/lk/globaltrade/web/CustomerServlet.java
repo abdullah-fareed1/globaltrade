@@ -19,12 +19,6 @@ import lk.globaltrade.session.UserAccountBeanLocal;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * {@code /customer/dashboard} -- CONTRACTS.md Sec11. Mapped to a single
- * path prefix, not {@code /*}, and every forward target lives under
- * {@code /WEB-INF/jsp/} so a forward can never re-enter this servlet's
- * own mapping (build plan FIX 9 / Step 6B).
- */
 @WebServlet("/customer/dashboard")
 public class CustomerServlet extends HttpServlet {
 
@@ -54,9 +48,6 @@ public class CustomerServlet extends HttpServlet {
 
         User caller = CurrentUser.resolve(request, userAccountBean);
         if (caller == null) {
-            // security-constraint on /customer/* already guarantees an
-            // authenticated CUSTOMER reached this point; this is a
-            // defensive fallback only.
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -85,24 +76,12 @@ public class CustomerServlet extends HttpServlet {
         try {
             shipmentBookingBean.bookShipment(caller.getId(), originPortId, destinationPortId, containerCount);
         } catch (NoContainerAvailableException e) {
-            // Application exception -- arrives as itself (CONTRACTS.md
-            // Sec10). The failed booking still produced a
-            // BOOK_SHIPMENT_FAILED audit row via AuditInterceptor's
-            // REQUIRES_NEW write, even though nothing here was
-            // persisted -- that row is visible at /admin/auditLog.
             showDashboard(request, response, e.getMessage());
             return;
         } catch (EJBException e) {
-            // SupplyChainSystemException is a SYSTEM exception (no
-            // @ApplicationException) -> the container always wraps it
-            // in EJBException; catching SupplyChainSystemException
-            // directly here would never match (CONTRACTS.md Sec10).
             showDashboard(request, response, "System error, please try again.");
             return;
         }
-
-        // PRG: redirect after a successful POST so a page refresh never
-        // re-submits the booking.
         response.sendRedirect(request.getContextPath() + "/customer/dashboard");
     }
 

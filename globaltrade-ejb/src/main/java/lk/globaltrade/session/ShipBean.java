@@ -1,4 +1,3 @@
-// Path: globaltrade-ejb/src/main/java/lk/globaltrade/session/ShipBean.java
 package lk.globaltrade.session;
 
 import jakarta.ejb.Stateless;
@@ -9,19 +8,6 @@ import lk.globaltrade.entities.Ship;
 
 import java.util.List;
 
-/**
- * Admin CRUD bean for ships. CMT with the container default (REQUIRED)
- * — no @TransactionAttribute needed.
- *
- * Deliberately un-intercepted (CONTRACTS.md §8) — same reasoning as
- * ContainerBean: no @Interceptors here, and this class must not appear
- * in the ejb-jar.xml <interceptor-order> list.
- *
- * Deliberately exposes no path to edit currentPort: per ENTITIES.md,
- * that field is written exclusively by ShipmentTimerBean (Phase 4). Both
- * create() (initial placement only) and updateStatus() respect that
- * write-ownership boundary.
- */
 @Stateless
 public class ShipBean implements ShipBeanLocal {
 

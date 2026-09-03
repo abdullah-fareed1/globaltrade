@@ -1,13 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" isErrorPage="true" %>
-<!--
-    Public page, must stay OUTSIDE WEB-INF (CONTRACTS.md Sec11) for the
-    same reason as login.jsp: the container serves it directly, this
-    time when @FormAuthenticationMechanismDefinition's loginToContinue
-    errorPage is invoked after a failed login attempt (wrong
-    email/password). Also registered as the app-wide <error-page> for
-    uncaught exceptions in web.xml, so isErrorPage="true" is set to
-    allow both uses.
--->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
